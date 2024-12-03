@@ -18,6 +18,7 @@ async function register(req, res) {
     });
     return res.status(200).json({ message: "New User Register", newUser });
   } catch (error) {
+    console.log(error);
     return res
       .status(400)
       .json({ message: "Error While Register User", error });
