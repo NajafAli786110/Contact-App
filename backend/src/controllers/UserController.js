@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Users = require("../model/userModel");
+const mailSentToUser = require("../config/sendMail");
 
 async function register(req, res) {
   const { username, email, password } = req.body;
@@ -15,8 +16,25 @@ async function register(req, res) {
       username,
       email,
       password: hashedPassword,
+      isVerified: true,
     });
-    return res.status(200).json({ message: "New User Register", newUser });
+
+    // // Email Verification
+    // const token = jwt.sign(
+    //   {
+    //     email: email,
+    //   },
+    //   process.env.JWT_SECRET_KEY,
+    //   {
+    //     expiresIn: "1hr",
+    //   }
+    // );
+    // mailSentToUser(email, token);
+
+    // End
+    return res
+      .status(200)
+      .json({ message: "Please Verified Your Email First" });
   } catch (error) {
     console.log(error);
     return res
@@ -34,14 +52,25 @@ async function login(req, res) {
 
   try {
     const findUserbyEmail = await Users.findOne({ email });
-    if (!findUserbyEmail)
+    if (!findUserbyEmail) {
       return res.status(400).json({
         message: "Can't find this email in our database Please Register First",
       });
+    }
+    if (!findUserbyEmail.isVerified) {
+      return res
+        .status(400)
+        .json({ message: "Please First Verify Your Email" });
+    }
 
     const decode = await bcrypt.compare(password, findUserbyEmail.password);
-    if (!decode)
+    if (!decode) {
       return res.status(400).json({ message: "Incorrect Password!" });
+    }
+
+    req.currUser = findUserbyEmail;
+    console.log("Coming from User Router", req.currUser);
+    
 
     const token = jwt.sign(
       {
@@ -53,8 +82,9 @@ async function login(req, res) {
         expiresIn: "1hr",
       }
     );
-
-    return res.status(200).json({ message: "User Logged In", token: token });
+    return res
+      .status(200)
+      .json({ message: "User Logged In", username: findUserbyEmail.username });
   } catch (error) {
     console.error("Login Error: ", error);
     return res.status(500).json({

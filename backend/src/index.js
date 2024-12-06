@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dbConnection = require("./config/dbConnection");
 const UserRouter = require("./routes/UserRoute");
+const verifyEmail = require("./controllers/verifyEmail");
+const ContactRouter = require("./routes/contactRoutes");
+const LoginStatusCheck = require("./middlewares/LoginStatusCheck");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -25,6 +28,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", UserRouter);
+app.use("/api/contact", ContactRouter);
+app.get("/verify/:token", verifyEmail);
 
 app.listen(PORT, (req, res) => {
   console.log(`Server Started at PORT ${PORT}`);

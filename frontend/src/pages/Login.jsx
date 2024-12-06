@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import { data, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { userlogin, userlogout } from "../redux/AuthSlice";
 
-function Login() {
+const Login = () => {
   const [loginField, setLoginFields] = useState({
     email: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // OnChange Handler
   const onChangeValue = (e) => {
@@ -44,12 +47,25 @@ function Login() {
         { withCredentials: true }
       );
       toast.success(login.data.message);
+      console.log(login);
+
       setLoginFields({
         email: "",
         password: "",
       });
+
       setLoading(false);
       navigate("/");
+      try {
+        const dispatchDo = dispatch(
+          userlogin({ username: login.data.username })
+        );
+        if (dispatchDo) {
+          console.log("Yes");
+        }
+      } catch (error) {
+        console.log("not dispatch", error);
+      }
     } catch (error) {
       if (error.response) {
         toast.error(
@@ -127,6 +143,6 @@ function Login() {
       </div>
     </div>
   );
-}
+};
 
 export default Login;
