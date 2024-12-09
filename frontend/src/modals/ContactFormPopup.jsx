@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { updateContacts } from "../api";
+import { createContact } from "../api";
 import { toast } from "react-toastify";
 
-const EditPopup = ({ setEditModalOpen, contact, setActiveContact }) => {
+const ContactFormPopup = ({ setCreateContactModalOpen, handleChangeContacts }) => {
   const [contactField, setContactField] = useState({
-    name: contact?.name,
-    description: contact?.description || "",
-    url: contact?.url || "",
+    name: "",
+    description: "",
+    url: "",
   });
 
   const handleChange = (e) => {
@@ -18,18 +18,17 @@ const EditPopup = ({ setEditModalOpen, contact, setActiveContact }) => {
   };
 
   const handleClose = () => {
-    setEditModalOpen(false);
-    setActiveContact(null);
-    console.log(contact._id);
+    setCreateContactModalOpen(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedContact = await updateContacts(contact._id, contactField);
+      const updatedContact = await createContact(contactField);
       toast.success(updatedContact);
+      handleChangeContacts();
     } catch (error) {
-      console.log("Error Updating contact", error);
+      console.log("Error Creating contact", error);
       toast.error(error.message);
     }
     handleClose();
@@ -46,13 +45,13 @@ const EditPopup = ({ setEditModalOpen, contact, setActiveContact }) => {
           <button
             type="button"
             onClick={() => handleClose()}
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+            className="absolute top-2 right-2 text-black hover:text-gray-700 focus:outline-none"
           >
             ✖
           </button>
 
           <h2 className="text-2xl font-bold text-gray-700 mb-4">
-            Edit Contact
+            Add a New Contact
           </h2>
           <div className="flex flex-col gap-6">
             <input
@@ -61,7 +60,7 @@ const EditPopup = ({ setEditModalOpen, contact, setActiveContact }) => {
               name="name"
               value={contactField.name}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-3 border text-gray-800 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             <input
               type="text"
@@ -69,7 +68,7 @@ const EditPopup = ({ setEditModalOpen, contact, setActiveContact }) => {
               name="description"
               value={contactField.description}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-3 border text-gray-800 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             <input
               type="text"
@@ -77,7 +76,7 @@ const EditPopup = ({ setEditModalOpen, contact, setActiveContact }) => {
               name="url"
               value={contactField.url}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-3 border text-gray-800 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             <input
               type="submit"
@@ -91,4 +90,4 @@ const EditPopup = ({ setEditModalOpen, contact, setActiveContact }) => {
   );
 };
 
-export default EditPopup;
+export default ContactFormPopup;

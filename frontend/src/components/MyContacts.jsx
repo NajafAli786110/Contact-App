@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 
 const MyContacts = () => {
   const contacts = useSelector((state) => state.contacts.contact);
+  
   return (
     <div className="w-3/4 px-12 py-14 flex flex-col gap-8 align-baseline justify-start">
       <h1 className="text-3xl font-bold">My Contacts</h1>

@@ -3,6 +3,9 @@ import axios from "axios";
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
   withCredentials: true,
+  headers: {
+    Authorization: `${localStorage.getItem("token")}`
+  }
 });
 
 export const fetchContacts = async () => {
@@ -16,6 +19,15 @@ export const deleteContacts = async (id) => {
 };
 
 export const updateContacts = async (id, contactField) => {
-  const response = await api.patch(`/contact/${id}`, contactField, {withCredentials: true});
+  const response = await api.patch(`/contact/${id}`, contactField, {
+    withCredentials: true,
+  });
+  return response.data.message;
+};
+
+export const createContact = async (contact) => {
+  const response = await api.post(`/contact/`, contact, {
+    withCredentials: true,
+  });
   return response.data.message;
 };

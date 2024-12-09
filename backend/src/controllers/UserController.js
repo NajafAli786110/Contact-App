@@ -32,6 +32,7 @@ async function register(req, res) {
     // mailSentToUser(email, token);
 
     // End
+    
     return res
       .status(200)
       .json({ message: "Please Verified Your Email First" });
@@ -69,7 +70,6 @@ async function login(req, res) {
     }
 
     req.currUser = findUserbyEmail;
-    console.log("Coming from User Router", req.currUser);
     
 
     const token = jwt.sign(
@@ -77,14 +77,11 @@ async function login(req, res) {
         userID: findUserbyEmail._id,
         email: findUserbyEmail.email,
       },
-      process.env.JWT_SECRET_KEY,
-      {
-        expiresIn: "1hr",
-      }
+      process.env.JWT_SECRET_KEY
     );
     return res
       .status(200)
-      .json({ message: "User Logged In", username: findUserbyEmail.username });
+      .json({ message: "User Logged In", username: findUserbyEmail.username, email, token });
   } catch (error) {
     console.error("Login Error: ", error);
     return res.status(500).json({

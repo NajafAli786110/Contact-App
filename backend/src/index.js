@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", UserRouter);
-app.use("/api/contact", ContactRouter);
+app.use("/api/contact", LoginStatusCheck, ContactRouter);
 app.get("/verify/:token", verifyEmail);
 
 app.listen(PORT, (req, res) => {

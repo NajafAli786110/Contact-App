@@ -1,13 +1,16 @@
+const jwt = require("jsonwebtoken");
+
 function LoginStatusCheck(req, res, next) {
-  const currUser = req.currUser || null;
-  console.log("Coming from Middleware", currUser);
+  // const token = req.headers.authorization?.split(" ")[1]?.trim();
+  const token = JSON.parse(req.headers.authorization);
 
-  if (!currUser) {
-    return res.status(400).json({ message: "Please log in first" });
+  try {
+    const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    req.user = decode;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Unauthorized: Invalid Token" });
   }
-
-  console.log("Current User:", currUser);
-  next();
 }
 
 module.exports = LoginStatusCheck;

@@ -2,7 +2,7 @@ const UserContact = require("../model/contactModal");
 
 async function getContact(req, res) {
   try {
-    const contact = await UserContact.find({});
+    const contact = await UserContact.find({createdBy: req.user.userID});
     return res.status(200).json({ message: "Here's Your Response", contact });
   } catch (error) {
     console.log("Error Comes while Get contact", error);
@@ -39,6 +39,7 @@ async function createContact(req, res) {
       name,
       description,
       url,
+      createdBy: req.user.userID,
     });
 
     return res.status(200).json({ message: "Contact Created Successfully" });

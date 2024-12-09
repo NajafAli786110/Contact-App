@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { userlogin, userlogout } from "../redux/AuthSlice";
+import { userlogin } from "../redux/AuthSlice";
 
 const Login = () => {
   const [loginField, setLoginFields] = useState({
@@ -47,25 +47,22 @@ const Login = () => {
         { withCredentials: true }
       );
       toast.success(login.data.message);
-      console.log(login);
+      
+      try {
+        dispatch(
+          userlogin({ username: login.data.username, email: login.data.email, token: login.data.token })
+        );
+      } catch (error) {
+        console.log("not dispatch", error);
+      }
 
       setLoginFields({
         email: "",
         password: "",
       });
-
+      
       setLoading(false);
       navigate("/");
-      try {
-        const dispatchDo = dispatch(
-          userlogin({ username: login.data.username })
-        );
-        if (dispatchDo) {
-          console.log("Yes");
-        }
-      } catch (error) {
-        console.log("not dispatch", error);
-      }
     } catch (error) {
       if (error.response) {
         toast.error(
